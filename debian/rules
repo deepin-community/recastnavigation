@@ -1,4 +1,35 @@
 #!/usr/bin/make -f
 
+# Uncomment to view all compilation commands and fix W-compiler-flags-hidden
+export VERBOSE=1
+
+# Add hardening
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+#CMake silently ignores CPPFLAGS. Below will properly set CFLAGS/CXXFLAGS
+#https://wiki.debian.org/Hardening#Notes_for_packages_using_CMake
+CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
+CFLAGS:=$(shell dpkg-buildflags --get CFLAGS) $(CPPFLAGS) -fcommon
+CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS) $(CPPFLAGS)
+LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
+
+include /usr/share/dpkg/architecture.mk
+ifeq ($(origin CC),default)
+        CC = $(DEB_HOST_GNU_TYPE)-gcc
+endif
+
+# Use this variable to allow options passed to cmake to be overridable
+DEB_CMAKE_OPTIONS ?= -DCMAKE_VERBOSE_MAKEFILE=ON \
+                -DLIB_SUFFIX="/$(DEB_HOST_MULTIARCH)" \
+		-DBUILD_SHARED_LIBS=ON \
+                -DRECASTNAVIGATION_DEMO=OFF \
+		-DRECASTNAVIGATION_TESTS=OFF \
+		-DRECASTNAVIGATION_EXAMPLES=OFF \
+                ..
+
+override_dh_auto_configure:
+	dh_auto_configure -- $(DEB_CMAKE_OPTIONS)
+
+
 %:
-	dh $@
+	dh $@ --builddirectory=build

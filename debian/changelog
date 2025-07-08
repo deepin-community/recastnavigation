@@ -1,5 +1,5 @@
-template-repository (1.0-1) unstable; urgency=medium
+recastnavigation (1.5.1+git20210215.e75adf8-1) unstable; urgency=low
 
-  * Initial release
+  * First release to Debian. (Closes: #913828)
 
- -- Tsic404 <liuheng@deepin.org>  Sat, 28 Jan 2023 13:46:49 +0800
+ -- Bret Curtis <psi29a@gmail.com>  Fri, 19 Feb 2021 12:13:09 +0200
